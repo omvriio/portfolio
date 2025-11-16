@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cartoon Eye
+* source:	https://sketchfab.com/3d-models/cartoon-eye-16d4bbcec1c64a8799df4b22ff422c11
+* author:	MushyDay (https://sketchfab.com/MushyDay)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cartoon Eye" (https://sketchfab.com/3d-models/cartoon-eye-16d4bbcec1c64a8799df4b22ff422c11) by MushyDay (https://sketchfab.com/MushyDay) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
