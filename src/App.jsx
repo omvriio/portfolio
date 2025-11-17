@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { useNavigationStore } from './store/navigationStore'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 // Components
 import CircularNav from './components/Navigation/CircularNav'
@@ -187,8 +188,9 @@ function App() {
         <ContentSections />
       </div>
 
-      {/* Vercel Analytics */}
+      {/* Vercel data */}
       <Analytics />
+      <SpeedInsights/>
     </div>
   )
 }
