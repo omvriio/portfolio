@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { useNavigationStore } from './store/navigationStore'
+import { Analytics } from '@vercel/analytics/react'
 
 // Components
 import CircularNav from './components/Navigation/CircularNav'
@@ -185,6 +186,9 @@ function App() {
       <div style={{ background: '#ffffff' }}>
         <ContentSections />
       </div>
+
+      {/* Vercel Analytics */}
+      <Analytics />
     </div>
   )
 }
