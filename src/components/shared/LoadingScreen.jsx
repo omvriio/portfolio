@@ -1,7 +1,9 @@
 // Loading Screen Component
 import { motion } from 'framer-motion'
+import { useThemeStore } from '@store/themeStore'
 
 const LoadingScreen = () => {
+  const { isDarkMode } = useThemeStore()
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -10,7 +12,7 @@ const LoadingScreen = () => {
       style={{
         position: 'fixed',
         inset: 0,
-        background: '#ffffff',
+        background: isDarkMode ? '#0a0a0a' : '#ffffff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -23,7 +25,7 @@ const LoadingScreen = () => {
         style={{
           fontSize: '24px',
           fontWeight: 600,
-          color: '#000000',
+          color: isDarkMode ? '#ffffff' : '#000000',
           letterSpacing: '2px',
           display: 'flex',
           alignItems: 'center',

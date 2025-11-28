@@ -1,7 +1,10 @@
 // CV Button Component (for landing state) - Black box design
 import { motion } from 'framer-motion'
+import { useThemeStore } from '@store/themeStore'
 
 const CVButton = () => {
+  const { isDarkMode } = useThemeStore()
+  
   const handleDownload = () => {
     // Add your CV download logic here
     console.log('Downloading CV...')
@@ -13,8 +16,8 @@ const CVButton = () => {
       onClick={handleDownload}
       whileHover={{
         scale: 1.05,
-        background: '#ffffff',
-        color: '#000000'
+        background: isDarkMode ? '#000000' : '#ffffff',
+        color: isDarkMode ? '#ffffff' : '#000000'
       }}
       whileTap={{ scale: 0.95 }}
       style={{
@@ -22,8 +25,8 @@ const CVButton = () => {
         top: '7%',
         right: '10%',
         zIndex: 100,
-        background: '#000000',
-        color: '#FFFFFF',
+        background: isDarkMode ? '#ffffff' : '#000000',
+        color: isDarkMode ? '#000000' : '#FFFFFF',
         padding: '16px 32px',
         borderRadius: '0px',
         fontSize: 'clamp(1.25rem, 4vw, 2rem)',

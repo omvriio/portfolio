@@ -1,0 +1,93 @@
+rotation du circular Nav wheel: (i added thickness and centered the circular nav keep my work as is but  work on : when you click on a segment , the wheel (take current position as the centered idle one) turns so the segments becomes centered vertically and that segment of the wheel gets bigger to contains the details on it s background  and the wheel (circular nav) gets smaller and moves to the side )
+Great question! Let me explain how the circular rotation works: 
+
+Read [](file:///c%3A/Users/lenovo/Documents/portfolio/src/components/Navigation/CircularNav.jsx#1-1), lines 1 to 81
+
+Perfect! Let me explain how the circular rotation works step by step:
+
+## 🔄 **How the Circular Rotation Works:**
+
+### **1. The Math Behind It** (Lines 23-29)
+```jsx
+const handleSegmentClick = (segment) => {
+  // Calculate rotation needed to center segment at 0° (right horizontal)
+  const targetRotation = -segment.angle
+  setExpandedSegment(segment, targetRotation)
+}
+```
+
+**Example:**
+- **About segment** is at `45°` → Rotate wheel by `-45°` to bring it to `0°` (horizontal right)
+- **Work segment** is at `135°` → Rotate wheel by `-135°` to bring it to `0°`
+- **Skills segment** is at `225°` → Rotate wheel by `-225°` to bring it to `0°`
+- **Contact segment** is at `315°` → Rotate wheel by `-315°` to bring it to `0°`
+
+### **2. The Animation** (Lines 64-68)
+```jsx
+<motion.svg 
+  animate={{
+    rotate: wheelRotation  // This value comes from the store
+  }}
+  transition={{ duration: 0.8, type: 'spring', stiffness: 80 }}
+>
+```
+
+The `motion.svg` from Framer Motion:
+- Takes the `wheelRotation` value (e.g., `-45`, `-135`, etc.)
+- **Smoothly rotates** the entire SVG element around its center
+- Uses a **spring animation** (bouncy, natural feel) with stiffness 80
+- Duration of 0.8 seconds for the rotation
+
+### **3. How SVG Rotation Works**
+
+The SVG has a center point at `(0, 0)` because of this viewBox:
+```jsx
+viewBox={`${-svgSize/2} ${-svgSize/2} ${svgSize} ${svgSize}`}
+```
+
+When you rotate the SVG:
+- All segments rotate **together** as one unit
+- They stay in their relative positions
+- The clicked segment ends up horizontal (at 0°/360°)
+
+### **4. Visual Example**
+
+**Initial State:**
+```
+        About (45°)
+           /
+          /
+Contact ---- Work (135°)
+   (315°)    \
+              \
+            Skills (225°)
+```
+
+**After Clicking "Skills" (at 225°):**
+- Wheel rotates by `-225°`
+- Skills segment moves to horizontal right (0°)
+```
+About (180°)   Skills (0°) →→→ [Details Panel]
+    |
+    |
+Work (270°) - Contact (90°)
+```
+
+### **5. The Complete Flow**
+
+1. **User clicks** "Skills" segment
+2. `handleSegmentClick` calculates: `targetRotation = -225°`
+3. Store updates: `wheelRotation` becomes `-225`
+4. `motion.svg` detects the change
+5. SVG **smoothly animates** from current rotation to `-225°`
+6. Skills segment now sits horizontally on the right
+7. Details panel appears next to it
+
+### **Key Points:**
+- ✅ **Negative rotation** brings segments clockwise to 0°
+- ✅ **Spring animation** gives it a natural, bouncy feel
+- ✅ **All segments rotate together** because they're inside the same SVG
+- ✅ **No complex calculations** - just simple angle negation!
+
+It's elegant because it leverages SVG's built-in rotation around a center point, combined with Framer Motion's smooth animation capabilities!
+

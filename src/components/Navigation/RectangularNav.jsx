@@ -1,9 +1,11 @@
 // Rectangular Navigation (appears on scroll)
 import { motion } from 'framer-motion'
 import { useNavigationStore } from '@store/navigationStore'
+import { useThemeStore } from '@store/themeStore'
 
 const RectangularNav = ({ scrollProgress }) => {
   const { activeSection, setActiveSection } = useNavigationStore()
+  const { isDarkMode } = useThemeStore()
 
   const navItems = [
     { id: 'about', label: 'About', color: '#00D9FF' },
@@ -42,14 +44,15 @@ const RectangularNav = ({ scrollProgress }) => {
     >
       {/* Rectangular nav container */}
       <div style={{
-        background: '#000000',
+        background: isDarkMode ? '#ffffff' : '#000000',
         borderRadius: '0px',
         padding: '12px 32px',
         display: 'flex',
         gap: '12px',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        boxShadow: isDarkMode ? '0 4px 20px rgba(255, 255, 255, 0.1)' : '0 4px 20px rgba(0, 0, 0, 0.3)',
+        transition: 'all 0.3s ease'
       }}>
         {navItems.map((item, index) => (
           <motion.button
@@ -63,7 +66,7 @@ const RectangularNav = ({ scrollProgress }) => {
             style={{
               background: activeSection === item.id ? item.color : 'transparent',
               border: 'none',
-              color: '#ffffff',
+              color: isDarkMode ? '#000000' : '#ffffff',
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',

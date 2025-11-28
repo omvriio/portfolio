@@ -1,12 +1,12 @@
 // Central Eye Component (3D) - Using Downloaded GLTF Model
-import { Canvas, useFrame } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { useGLTF, Float } from '@react-three/drei'
-import { useRef, Suspense, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, forwardRef } from 'react'
 import * as THREE from 'three'
 import { useMousePosition } from '@hooks/useMousePosition'
 import { useNavigationStore } from '@store/navigationStore'
 
-function EyeModel({ onLoad }) {
+const EyeModel = forwardRef(({ onLoad }, ref) => {
   const groupRef = useRef()
   const mousePosition = useMousePosition()
   const { hoveredSegment } = useNavigationStore()
@@ -14,6 +14,17 @@ function EyeModel({ onLoad }) {
   
   // Load the cartoon eye model
   const { scene } = useGLTF('/models/scene.gltf')
+
+  // Expose ref to parent (App)
+  useEffect(() => {
+    if (groupRef.current && ref) {
+      if (typeof ref === 'function') {
+        ref(groupRef.current)
+      } else {
+        ref.current = groupRef.current
+      }
+    }
+  }, [ref])
 
   // Notify parent when model is loaded
   useEffect(() => {
@@ -33,9 +44,9 @@ function EyeModel({ onLoad }) {
     let targetX = (mousePosition.x - 0.5) * 0.5
     let targetY = (mousePosition.y - 0.5) * 0.5
 
-    // If segment is hovered, look at it (subtract 90 to match segment positioning)
+    // If segment is hovered, look at it
     if (hoveredSegment) {
-      const angle = (hoveredSegment.angle - 90) * Math.PI / 180  // Subtract 90 degrees
+      const angle = (hoveredSegment.angle - 90) * Math.PI / 180
       targetX = Math.cos(angle) * 0.5
       targetY = Math.sin(angle) * 0.5
     }
@@ -64,51 +75,19 @@ function EyeModel({ onLoad }) {
       </group>
     </Float>
   )
-}
+})
 
-// Simple loading placeholder (minimalist)
-function Loader() {
-  return (
-    <mesh>
-      <sphereGeometry args={[0.8, 32, 32]} />
-      <meshStandardMaterial color="#000000" wireframe opacity={0.1} transparent />
-    </mesh>
-  )
-}
+EyeModel.displayName = 'EyeModel'
 
 // Preload the model
 useGLTF.preload('/models/scene.gltf')
 
-const CentralEye = ({ onModelLoaded }) => {
+const CentralEye = forwardRef(({ onModelLoaded }, ref) => {
   return (
-    <div style={{
-      position: 'fixed',
-      width: '30em',
-      height: '30em',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 5,
-      pointerEvents: 'none'
-    }}>
-      <Canvas 
-        camera={{ position: [0, 0, 5], fov: 50 }}
-        style={{ background: 'transparent' }}
-        gl={{ antialias: true, alpha: true }}
-      >
-        {/* Lighting */}
-        <ambientLight intensity={1} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} />
-        <pointLight position={[-5, 0, 5]} intensity={0.8} color="#00D9FF" />
-        <pointLight position={[5, 0, -5]} intensity={0.5} color="#8B5CF6" />
-        
-        {/* Eye Model with loading fallback */}
-        <Suspense fallback={<Loader />}>
-          <EyeModel onLoad={onModelLoaded} />
-        </Suspense>
-      </Canvas>
-    </div>
+    <EyeModel ref={ref} onLoad={onModelLoaded} />
   )
-}
+})
+
+CentralEye.displayName = 'CentralEye'
 
 export default CentralEye

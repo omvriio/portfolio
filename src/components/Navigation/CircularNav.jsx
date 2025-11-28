@@ -3,18 +3,28 @@ import { motion } from 'framer-motion'
 import CircularSegment from './CircularSegment'
 import { useNavigationStore } from '@store/navigationStore'
 
-const CircularNav = ({ onSegmentClick }) => {
-  const { setHoveredSegment } = useNavigationStore()
+const CircularNav = () => {
+  const { setActiveSection, setHoveredSegment, isAnimating } = useNavigationStore((state) => ({
+    setActiveSection: state.setActiveSection,
+    setHoveredSegment: state.setHoveredSegment,
+    isAnimating: state.isAnimating
+  }))
 
   const segments = [
     { id: 'about', label: 'About', angle: 45, color: '#00D9FF' },
     { id: 'work', label: 'Work', angle: 135, color: '#0091FF' },
-    { id: 'skills', label: 'Skills', angle: 225, color: '#8B5CF6' },
+    { id: 'projects', label: 'Projects', angle: 225, color: '#8B5CF6' },
     { id: 'contact', label: 'Connect', angle: 315, color: '#FF006E' }
   ]
 
   const circleRadius = 300
   const svgSize = circleRadius * 2 + 200 // Extra space for labels
+
+  const handleSegmentClick = (sectionId) => {
+    if (!isAnimating) {
+      setActiveSection(sectionId)
+    }
+  }
 
   return (
     <motion.div 
@@ -31,7 +41,9 @@ const CircularNav = ({ onSegmentClick }) => {
         position: 'fixed',
         top: '50%',
         left: '50%',
-        zIndex: 5
+        zIndex: 50,
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'auto'
       }}
     >
       <svg 
@@ -64,8 +76,9 @@ const CircularNav = ({ onSegmentClick }) => {
             segment={segment}
             radius={circleRadius}
             index={index}
-            onClick={onSegmentClick}
+            onClick={() => handleSegmentClick(segment.id)}
             onHover={setHoveredSegment}
+            isDisabled={isAnimating}
           />
         ))}
       </svg>

@@ -1,6 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useRef, useEffect, Suspense, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { PerspectiveCamera, Preload } from '@react-three/drei'
 import { useNavigationStore } from './store/navigationStore'
+import { useThemeStore } from './store/themeStore'
+import { useSceneTransitions } from './hooks/useSceneTransitions'
+import { useScrollNavigation } from './hooks/useScrollNavigation'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from "@vercel/speed-insights/react"
 
@@ -11,71 +16,39 @@ import LandingGreeting from './components/landing/LandingGreeting'
 import CVButton from './components/shared/CVButton'
 import ContentSections from './components/sections/ContentSections'
 import LoadingScreen from './components/shared/LoadingScreen'
-import RectangularNav from './components/Navigation/RectangularNav'
+import ThemeToggle from './components/shared/ThemeToggle'
 
 function App() {
-  const { activeSection, setActiveSection } = useNavigationStore()
+  // 3D Scene refs for camera and eye model
+  const cameraRef = useRef()
+  const eyeRef = useRef()
+
+  // State from Zustand stores
+  const { activeSection } = useNavigationStore()
+  const { isDarkMode } = useThemeStore()
+  
+  // Local component state
   const [isModelLoaded, setIsModelLoaded] = useState(false)
-  const [isTransforming, setIsTransforming] = useState(false)
-  const [scrollProgress, setScrollProgress] = useState(0)
 
-  // Handle segment click
-  const handleSegmentClick = (sectionId) => {
-    setIsTransforming(true)
-    setActiveSection(sectionId)
-    
-    // Scroll to section
-    setTimeout(() => {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-      setIsTransforming(false)
-    }, 400)
-  }
+  // Get the transition animation function from hook
+  const { transitionTo } = useSceneTransitions(cameraRef, eyeRef)
 
-  // Track scroll position
+  // Enable scroll-based navigation
+  useScrollNavigation()
+
+  // Listen for section changes and trigger GSAP animations
   useEffect(() => {
-    const handleScroll = () => {
-      const viewportHeight = window.innerHeight
-      const scrollY = window.scrollY
-      // Calculate progress from 0 to 1 based on first viewport
-      const progress = Math.min(scrollY / viewportHeight, 1)
-      setScrollProgress(progress)
-
-      // Determine which section is currently in view
-      const sections = ['about', 'work', 'skills', 'contact']
-      let currentSection = null
-
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          // Check if section is in the upper half of viewport
-          if (rect.top <= viewportHeight / 2 && rect.bottom >= viewportHeight / 2) {
-            currentSection = sectionId
-            break
-          }
-        }
-      }
-
-      // Update active section if changed
-      if (currentSection && currentSection !== activeSection) {
-        setActiveSection(currentSection)
-      }
+    if (transitionTo && isModelLoaded) {
+      transitionTo(activeSection)
     }
+  }, [activeSection, transitionTo, isModelLoaded])
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Run once on mount
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [activeSection, setActiveSection])
-
-  // Handle model loaded
+  // Handle model loaded callback
   const handleModelLoaded = () => {
-    console.log('Model loaded callback triggered')
+    console.log('3D Model loaded')
     setTimeout(() => {
       setIsModelLoaded(true)
-    }, 500) // Small delay for smooth transition
+    }, 500)
   }
 
   // Fallback: If model takes too long, show content anyway
@@ -93,104 +66,78 @@ function App() {
   return (
     <div className="app" style={{
       minHeight: '100vh',
-      background: '#ffffff'
+      background: isDarkMode ? '#0a0a0a' : '#ffffff',
+      transition: 'background 0.3s ease'
     }}>
       {/* Loading Screen */}
       <AnimatePresence>
         {!isModelLoaded && <LoadingScreen />}
       </AnimatePresence>
 
-      {/* Landing State (Circular Navigation) - Full screen section */}
+      {/* Main 3D Scene Canvas - Always rendered but contained */}
       {isModelLoaded && (
-        <motion.div 
-          className="landing-state"
+        <motion.div
+          className="canvas-container"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           style={{
-            position: 'relative',
-            minHeight: '100vh',
-            background: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100vh',
+            zIndex: 0,
+            background: isDarkMode ? '#0a0a0a' : '#ffffff',
+            transition: 'background 0.3s ease',
+            pointerEvents: 'none'
           }}
         >
-          {/* Greeting - fades out on scroll */}
-          <motion.div
-            style={{
-              opacity: 1 - scrollProgress,
-              pointerEvents: scrollProgress > 0.5 ? 'none' : 'auto'
-            }}
-          >
-            <LandingGreeting isTransforming={isTransforming} />
-          </motion.div>
-          
-          {/* CV Button - fades out on scroll */}
-          <motion.div
-            style={{
-              opacity: 1 - scrollProgress,
-              pointerEvents: scrollProgress > 0.5 ? 'none' : 'auto'
-            }}
-          >
-            <CVButton />
-          </motion.div>
-          
-          {/* Central Eye + Circular Menu - fades out on scroll */}
-          <motion.div 
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: 1 - scrollProgress,
-              pointerEvents: scrollProgress > 0.5 ? 'none' : 'auto'
-            }}
-          >
-            <CentralEye onModelLoaded={handleModelLoaded} />
-            <CircularNav onSegmentClick={handleSegmentClick} />
-          </motion.div>
-          
-          {/* Scroll indicator - fades out on scroll */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: (1 - scrollProgress) * 0.6 }}
-            transition={{ delay: 1.5 }}
-            style={{
-              position: 'absolute',
-              bottom: '40px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              color: '#000000',
-              fontSize: '14px',
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            <div>Scroll or click to explore</div>
-            <motion.div 
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ fontSize: '20px', marginTop: '8px' }}
+          <Suspense fallback={null}>
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 75 }}
+              style={{ width: '100%', height: '100%' }}
+              gl={{ antialias: true, alpha: true }}
             >
-              ↓
-            </motion.div>
-          </motion.div>
+              {/* Lighting setup */}
+              <ambientLight intensity={1.5} />
+              <directionalLight position={[5, 5, 5]} intensity={1} />
+              <pointLight position={[-5, 0, 5]} intensity={0.8} color="#00D9FF" />
+              <pointLight position={[5, 0, -5]} intensity={0.5} color="#8B5CF6" />
+              
+              {/* Camera ref for animation */}
+              <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 5]} fov={75} />
+              
+              {/* Central Eye Model ref for animation */}
+              <CentralEye ref={eyeRef} onModelLoaded={handleModelLoaded} />
+              
+              <Preload all />
+            </Canvas>
+          </Suspense>
         </motion.div>
       )}
 
-      {/* Rectangular Navigation - appears on scroll */}
-      <RectangularNav scrollProgress={scrollProgress} />
+      {/* UI Overlay (Circular Nav + Content) - Fixed on top of canvas */}
+      {isModelLoaded && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 1, pointerEvents: 'none' }}>
+          {/* Circular Navigation */}
+          <div style={{ pointerEvents: 'auto' }}>
+            <CircularNav />
+          </div>
+          
+          {/* Content Sections */}
+          <div style={{ pointerEvents: 'auto', height: '100%', overflowY: 'auto' }}>
+            <ContentSections />
+          </div>
+        </div>
+      )}
 
-      {/* Content Sections (always present below landing) */}
-      <div style={{ background: '#ffffff' }}>
-        <ContentSections />
-      </div>
-
-      {/* Vercel data */}
+      {/* Vercel analytics */}
       <Analytics />
-      <SpeedInsights/>
+      <SpeedInsights />
+      
+      {/* Theme Toggle */}
+      <ThemeToggle />
     </div>
   )
 }
