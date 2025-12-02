@@ -64,8 +64,8 @@ export const useMousePosition = () => {
 
       // Normalize to 0-1 range with 2x scale (adjust sensitivity as needed)
       // Divide by 90 to get reasonable range, add 0.5 to center, multiply by 2 for more movement
-      const x = (gamma / 90) * 0.8 + 0.5  // ±80% sensitivity (2x)
-      const y = (beta / 90) * 0.8 + 0.5   // ±80% sensitivity (2x)
+      const x = (gamma / 90) + 0.5  // ±80% sensitivity (2x)
+      const y = (beta / 90)  + 0.5   // ±80% sensitivity (2x)
 
       setPosition({
         x: Math.max(0, Math.min(1, x)),
