@@ -7,4 +7,4 @@
 
 > **"Humans create Meaning; Machines create Possibilities"**
 
-A high-performance 3D interactive portfolio showcasing AI engineering work in perception systems, robotics, and sensor fusion. Built for **Omar Marghadi**.
+A high-performance 3D interactive portfolio showcasing AI engineering work in perception systems, robotics, and sensor fusion. Built by **Omar Marghadi**.
