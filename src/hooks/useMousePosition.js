@@ -17,26 +17,31 @@ export const useMousePosition = () => {
           if (permission === 'granted') {
             isGyroActive = true
             setHasGyro(true)
+            console.log('Gyroscope permission granted')
           }
         } else if (typeof DeviceOrientationEvent !== 'undefined') {
           // Non-iOS devices with gyroscope
           isGyroActive = true
           setHasGyro(true)
+          console.log('Gyroscope available (non-iOS)')
         }
       } catch (error) {
-        console.log('Gyroscope not available:', error)
+        console.log('Gyroscope error:', error)
       }
     }
 
-    // Request permission on first touch for iOS
-    const handleFirstTouch = () => {
+    // Request permission on first interaction
+    const handleFirstInteraction = () => {
       if (!isGyroActive) {
         checkGyroSupport()
       }
-      window.removeEventListener('touchstart', handleFirstTouch)
+      document.removeEventListener('touchstart', handleFirstInteraction)
+      document.removeEventListener('click', handleFirstInteraction)
     }
 
-    window.addEventListener('touchstart', handleFirstTouch)
+    // Add both touchstart and click for better compatibility
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true })
+    document.addEventListener('click', handleFirstInteraction, { once: true })
 
     // Mouse move handler (desktop)
     const handleMouseMove = (e) => {
@@ -50,15 +55,17 @@ export const useMousePosition = () => {
 
     // Gyroscope handler (mobile)
     const handleDeviceOrientation = (event) => {
+      if (!isGyroActive) return
+
       // beta: rotation around X axis (-180 to 180) - tilt forward/backward
       // gamma: rotation around Y axis (-90 to 90) - tilt left/right
       let beta = event.beta || 0  // -180 to 180
       let gamma = event.gamma || 0  // -90 to 90
 
-      // Normalize to 0-1 range (adjust sensitivity as needed)
-      // Divide by 90 to get reasonable range, add 0.5 to center
-      const x = (gamma / 90) * 0.4 + 0.5  // ±40% sensitivity
-      const y = (beta / 90) * 0.4 + 0.5   // ±40% sensitivity
+      // Normalize to 0-1 range with 2x scale (adjust sensitivity as needed)
+      // Divide by 90 to get reasonable range, add 0.5 to center, multiply by 2 for more movement
+      const x = (gamma / 90) * 0.8 + 0.5  // ±80% sensitivity (2x)
+      const y = (beta / 90) * 0.8 + 0.5   // ±80% sensitivity (2x)
 
       setPosition({
         x: Math.max(0, Math.min(1, x)),
@@ -72,7 +79,8 @@ export const useMousePosition = () => {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('deviceorientation', handleDeviceOrientation)
-      window.removeEventListener('touchstart', handleFirstTouch)
+      document.removeEventListener('touchstart', handleFirstInteraction)
+      document.removeEventListener('click', handleFirstInteraction)
     }
   }, [])
 
