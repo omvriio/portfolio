@@ -3,8 +3,21 @@ import { motion } from 'framer-motion'
 
 const CVButton = () => {
   const handleDownload = () => {
-    // Add your CV download logic here
-    console.log('Downloading CV...')
+    // Create a temporary link and trigger download
+    const cvUrl = '/CV_Omar_MARGHADI.pdf'
+    
+    // Try to open in new window first
+    const newWindow = window.open(cvUrl, '_blank')
+    
+    // Fallback: if blocked, try download
+    if (!newWindow || newWindow.closed || typeof newWindow === 'undefined') {
+      const link = document.createElement('a')
+      link.href = cvUrl
+      link.download = 'CV_Omar_MARGHADI.pdf'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
   }
 
   return (

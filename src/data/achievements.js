@@ -3,56 +3,64 @@
 export const achievements = [
   {
     id: 1,
-    type: "award",
-    icon: "🥈",
-    title: "2nd Prize - African Robotic Brain",
-    year: "2024",
-    category: "Computer Vision Category",
-    description: "Awarded second place in the Computer Vision category at the African Robotic Brain competition",
+    type: "education",
+    title: "Double Engineering Degree - Magna Cum Laude",
+    institution: "École Centrale Lyon & ENSAM",
+    description: "Graduated with honors from dual engineering program. Master's thesis on Multi-Floor Robot Perception at Orange Innovation. GPA: 4.0/4.0",
+    year: "2025",
     importance: "high"
   },
   
   {
     id: 2,
     type: "award",
-    icon: "🏅",
-    title: "Top 8/200 - Think AI Morocco",
+    title: "2nd Prize - African Robotic Brain Competition",
     year: "2024",
-    organization: "UM6P",
-    description: "Placed in top 8 out of 200 participants at the Think AI Morocco Hackathon",
+    category: "Computer Vision Category",
+    organization: "International Competition",
+    description: "Recognized for exceptional computer vision algorithm development and real-time processing capabilities",
     importance: "high"
   },
   
   {
     id: 3,
-    type: "education",
-    icon: "🎓",
-    title: "Double Degree - Magna Cum Laude",
-    institution: "École Centrale Lyon & ENSAM",
-    description: "Graduated with honors from dual engineering program",
-    year: "2025",
+    type: "award",
+    title: "Top 8/200 - Think AI Morocco Hackathon",
+    year: "2024",
+    organization: "UM6P University",
+    description: "Selected among top 8 finalists out of 200+ participants. Advanced AI implementation and innovation",
     importance: "high"
   },
   
   {
     id: 4,
     type: "certification",
-    icon: "📜",
     title: "Machine Learning Specialization",
-    provider: "DeepLearning.AI",
+    provider: "DeepLearning.AI (Andrew Ng)",
     year: "2023",
-    link: null, // Add certificate link
+    description: "Comprehensive specialization covering neural networks, optimization, and production ML systems",
+    link: null,
     importance: "medium"
   },
   
   {
     id: 5,
     type: "certification",
-    icon: "📜",
     title: "Six Sigma Yellow Belt",
-    provider: null,
+    provider: "Lean & Quality",
     year: "2024",
+    description: "Process optimization and continuous improvement certification",
     link: null,
+    importance: "medium"
+  },
+  
+  {
+    id: 6,
+    type: "certification",
+    title: "Advanced Robotics & Embedded Systems",
+    provider: "École Centrale Lyon",
+    year: "2024",
+    description: "Specialization in robotics architectures, ROS2, and embedded AI systems",
     importance: "medium"
   }
 ];
@@ -63,13 +71,27 @@ export const participations = [
     title: "HuggingFace LeRobot Hackathon",
     year: "2025",
     status: "active",
-    icon: "🤖"
+    description: "Advanced robotics with open-source LeRobot framework"
   },
   {
     id: 2,
     title: "Drone Defense Hackathon",
     year: "2025",
     status: "active",
-    icon: "🚁"
+    description: "Counter-drone technology and autonomous systems"
+  },
+  {
+    id: 3,
+    title: "African Robotic Brain Competition",
+    year: "2024",
+    status: "completed",
+    description: "International robotics and AI competition - 2nd Prize"
+  },
+  {
+    id: 4,
+    title: "Think AI Morocco Hackathon",
+    year: "2024",
+    status: "completed",
+    description: "AI innovation hackathon - Top 8/200"
   }
 ];

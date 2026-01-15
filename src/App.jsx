@@ -12,7 +12,6 @@ import CVButton from './components/shared/CVButton'
 import ContentSections from './components/sections/ContentSections'
 import LoadingScreen from './components/shared/LoadingScreen'
 import RectangularNav from './components/Navigation/RectangularNav'
-import GyroDebugOverlay from './components/shared/GyroDebugOverlay'
 
 function App() {
   const { activeSection, setActiveSection } = useNavigationStore()
@@ -73,7 +72,6 @@ function App() {
 
   // Handle model loaded
   const handleModelLoaded = () => {
-    console.log('Model loaded callback triggered')
     setTimeout(() => {
       setIsModelLoaded(true)
     }, 500) // Small delay for smooth transition
@@ -83,7 +81,6 @@ function App() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!isModelLoaded) {
-        console.log('Loading timeout - showing content anyway')
         setIsModelLoaded(true)
       }
     }, 5000) // 5 seconds max loading time
@@ -192,9 +189,6 @@ function App() {
       {/* Vercel data */}
       <Analytics />
       <SpeedInsights/>
-
-      {/* Debug overlay - Triple tap to show */}
-      <GyroDebugOverlay />
     </div>
   )
 }

@@ -18,7 +18,6 @@ function EyeModel({ onLoad }) {
   // Notify parent when model is loaded
   useEffect(() => {
     if (scene && !loaded) {
-      console.log('3D Eye Model Loaded!')
       setLoaded(true)
       if (onLoad) {
         onLoad()

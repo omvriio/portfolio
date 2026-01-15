@@ -43,14 +43,11 @@ export const useDeviceOrientation = () => {
             setGyroActive(true)
             isListening = true
             window.addEventListener('deviceorientation', handleDeviceOrientation)
-            console.log('✓ iOS Gyroscope permission granted')
           } else {
             setGyroPermission('denied')
-            console.log('✗ iOS Gyroscope permission denied')
           }
         } catch (error) {
           setGyroPermission('denied')
-          console.error('iOS permission request error:', error)
         }
       }
       // Non-iOS with deviceorientation support
@@ -60,14 +57,11 @@ export const useDeviceOrientation = () => {
           setGyroActive(true)
           isListening = true
           window.addEventListener('deviceorientation', handleDeviceOrientation)
-          console.log('✓ Android/Non-iOS Gyroscope activated')
         } catch (error) {
           setGyroPermission('denied')
-          console.error('Gyroscope activation error:', error)
         }
       } else {
         setGyroPermission('denied')
-        console.log('✗ Gyroscope not supported on this device')
       }
     }
 
