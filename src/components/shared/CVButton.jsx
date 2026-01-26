@@ -5,10 +5,10 @@ const CVButton = () => {
   const handleDownload = () => {
     // Create a temporary link and trigger download
     const cvUrl = '/CV_Omar_MARGHADI.pdf'
-    
+
     // Try to open in new window first
     const newWindow = window.open(cvUrl, '_blank')
-    
+
     // Fallback: if blocked, try download
     if (!newWindow || newWindow.closed || typeof newWindow === 'undefined') {
       const link = document.createElement('a')
@@ -67,15 +67,7 @@ const CVButton = () => {
         <line x1="12" y1="15" x2="12" y2="3"></line>
       </svg>
 
-      <span className="cv-text" style={{ display: 'inline' }}>CV</span>
-      
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .cv-text {
-            display: none !important;
-          }
-        }
-      `}</style>
+      <span className="cv-text hidden md:inline">CV</span>
     </motion.button>
   )
 }

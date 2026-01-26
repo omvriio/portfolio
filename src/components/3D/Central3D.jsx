@@ -6,14 +6,14 @@ import * as THREE from 'three'
 import { useMousePosition } from '@hooks/useMousePosition'
 import { useNavigationStore } from '@store/navigationStore'
 
-function EyeModel({ onLoad }) {
+function Central3D({ onLoad }) {
   const groupRef = useRef()
   const mousePosition = useMousePosition()
   const { hoveredSegment } = useNavigationStore()
   const [loaded, setLoaded] = useState(false)
-  
+
   // Load the cartoon eye model
-  const { scene } = useGLTF('/models/scene.gltf')
+  const { scene } = useGLTF('/models/3D-portrait.gltf')
 
   // Notify parent when model is loaded
   useEffect(() => {
@@ -55,8 +55,8 @@ function EyeModel({ onLoad }) {
   return (
     <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
       <group ref={groupRef}>
-        <primitive 
-          object={scene.clone()} 
+        <primitive
+          object={scene.clone()}
           scale={4}
           position={[0, -2, 0]}
         />
@@ -76,7 +76,7 @@ function Loader() {
 }
 
 // Preload the model
-useGLTF.preload('/models/scene.gltf')
+useGLTF.preload('/models/3D-portrait.gltf')
 
 const CentralEye = ({ onModelLoaded }) => {
   return (
@@ -90,7 +90,7 @@ const CentralEye = ({ onModelLoaded }) => {
       zIndex: 5,
       pointerEvents: 'none'
     }}>
-      <Canvas 
+      <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
         style={{ background: 'transparent' }}
         gl={{ antialias: true, alpha: true }}
@@ -100,10 +100,10 @@ const CentralEye = ({ onModelLoaded }) => {
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <pointLight position={[-5, 0, 5]} intensity={0.8} color="#00D9FF" />
         <pointLight position={[5, 0, -5]} intensity={0.5} color="#8B5CF6" />
-        
+
         {/* Eye Model with loading fallback */}
         <Suspense fallback={<Loader />}>
-          <EyeModel onLoad={onModelLoaded} />
+          <Central3D onLoad={onModelLoaded} />
         </Suspense>
       </Canvas>
     </div>

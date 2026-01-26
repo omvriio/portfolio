@@ -6,7 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 
 // Components
 import CircularNav from './components/Navigation/CircularNav'
-import CentralEye from './components/3D/CentralEye'
+import CentralEye from './components/3D/Central3D'
 import LandingGreeting from './components/landing/LandingGreeting'
 import CVButton from './components/shared/CVButton'
 import ContentSections from './components/sections/ContentSections'
@@ -23,7 +23,7 @@ function App() {
   const handleSegmentClick = (sectionId) => {
     setIsTransforming(true)
     setActiveSection(sectionId)
-    
+
     // Scroll to section
     setTimeout(() => {
       const element = document.getElementById(sectionId)
@@ -100,7 +100,7 @@ function App() {
 
       {/* Landing State (Circular Navigation) - Full screen section */}
       {isModelLoaded && (
-        <motion.div 
+        <motion.div
           className="landing-state"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -123,7 +123,7 @@ function App() {
           >
             <LandingGreeting isTransforming={isTransforming} />
           </motion.div>
-          
+
           {/* CV Button - fades out on scroll */}
           <motion.div
             style={{
@@ -133,9 +133,9 @@ function App() {
           >
             <CVButton />
           </motion.div>
-          
+
           {/* Central Eye + Circular Menu - fades out on scroll */}
-          <motion.div 
+          <motion.div
             style={{
               position: 'absolute',
               inset: 0,
@@ -149,9 +149,9 @@ function App() {
             <CentralEye onModelLoaded={handleModelLoaded} />
             <CircularNav onSegmentClick={handleSegmentClick} />
           </motion.div>
-          
+
           {/* Scroll indicator - fades out on scroll */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: (1 - scrollProgress) * 0.6 }}
             transition={{ delay: 1.5 }}
@@ -167,7 +167,7 @@ function App() {
             }}
           >
             <div>Scroll or click to explore</div>
-            <motion.div 
+            <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
               style={{ fontSize: '20px', marginTop: '8px' }}
@@ -188,7 +188,7 @@ function App() {
 
       {/* Vercel data */}
       <Analytics />
-      <SpeedInsights/>
+      <SpeedInsights />
     </div>
   )
 }
